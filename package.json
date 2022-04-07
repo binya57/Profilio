@@ -1,0 +1,15 @@
+{
+  "name": "blog-site",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start:live": "cd ./server && npm run start:live && cd ../Client App && npm start "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.3"
+  }
+}
