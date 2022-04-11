@@ -1,25 +1,30 @@
 class Http {
-  static Get = async (url, data, options = {}) => {
+  static Get = async (url, data) => {
+    if (data) {
+      typeof data === "string"
+        ? (url += data)
+        : (url += `?${Object.keys(data)
+            .map((key) => `${key}=${data[key]}`)
+            .join("&")}`);
+    }
     const requestOptions = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     };
 
     try {
       const response = await fetch(url, requestOptions);
-      console.log(response.ok);
-
-      const data = await response.json();
-      return data;
+      if (!response.ok) throw new Error(response.statusText);
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       throw error;
     }
   };
 
-  static Post = async (url, data, options) => {
+  static Post = async (url, data) => {
     const requestOptions = {
       method: "POST",
       headers: {
@@ -30,7 +35,7 @@ class Http {
 
     try {
       const response = await fetch(url, requestOptions);
-      console.log(response.ok);
+      if (!response.ok) throw new Error(response.statusText);
       const data = await response.json();
       return data;
     } catch (error) {

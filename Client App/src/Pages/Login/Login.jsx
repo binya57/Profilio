@@ -20,7 +20,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    Http.Post(API_METHODS.logIn, fieldValues)
+    Http.Post(API_METHODS.LOG_IN, fieldValues)
       .then((res) => cl(res))
       .catch((e) => cl(e));
   };

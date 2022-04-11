@@ -11,23 +11,15 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Http from "../../services/Http";
+import { API_METHODS } from "../../utils/dec";
 
 const SignUp = () => {
   const [fieldValues, setfieldValues] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await fetch("/api/signUp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(fieldValues),
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    Http.Post(API_METHODS.SIGN_UP, fieldValues).then().catch();
   };
 
   return (

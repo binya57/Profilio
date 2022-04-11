@@ -6,3 +6,4 @@ class Blog {
     this.DateUpdate = props.DateUpdate || new Date();
   }
 }
+export default Blog;
