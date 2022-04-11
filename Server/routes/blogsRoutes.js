@@ -4,6 +4,8 @@ const blogController = require("../controllers/blogController");
 
 router.get("/api/blogs", blogController.getAllBlogs);
 
-router.get("/api/blog/:blogId", blogController.getBlogById);
+router.get("/api/blogs/:blogId", blogController.getBlogById);
+
+router.post("/api/blogs", blogController.createBlog);
 
 module.exports = router;

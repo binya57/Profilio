@@ -1,17 +1,36 @@
-const blogs = [
-  { id: 2, author: "benjamin gilaad", name: "greates blog" },
-  { id: 5, author: "joe strong", name: "bodybuilding blog" },
-];
+const Blog = require("../models/blog");
 
-const getAllBlogs = (req, res) => {
-  res.json(blogs);
+const getAllBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    return res.json(blogs);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send();
+  }
 };
 
-const getBlogById = (req, res) => {
+const getBlogById = async (req, res) => {
   const { blogId } = req.params;
-  const requestedBlog = blogs.find((blog) => blog.id === +blogId);
-  if (!requestedBlog) return res.status(404).send();
-  res.json(requestedBlog);
+  try {
+    const requestedBlog = await Blog.findById(blogId);
+    if (!requestedBlog) return res.status(404).send();
+    res.json(requestedBlog);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
 };
 
-module.exports = { getAllBlogs, getBlogById };
+const createBlog = async (req, res) => {
+  const newBlog = new Blog(req.body);
+  try {
+    const response = await newBlog.save();
+    return res.status(201).json(response);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send();
+  }
+};
+
+module.exports = { getAllBlogs, getBlogById, createBlog };

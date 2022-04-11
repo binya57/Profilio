@@ -7,7 +7,7 @@ const signUp = async (req, res) => {
   const { email, password } = req.body;
   if (users.find((user) => user.email === email))
     return res
-      .status(200)
+      .status(409)
       .send("You already have an account, sign in to continue");
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
