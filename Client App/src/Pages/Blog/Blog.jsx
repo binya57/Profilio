@@ -21,13 +21,16 @@ const Blog = () => {
 
   useEffect(getBlog, [blogId]);
 
+  const addPost = (newPost) =>
+    setBlog((_blog) => ({ ..._blog, posts: [..._blog.posts, newPost] }));
+
   if (!blog) return <Loader />;
 
   return (
     <div className="blog">
       <h2>{blog.author}</h2>
       <h2>{blog.title}</h2>
-      <PostsList />
+      <PostsList addPost={addPost} posts={blog.posts} blogId={blogId} />
     </div>
   );
 };

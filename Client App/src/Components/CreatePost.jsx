@@ -3,7 +3,7 @@ import Post from "../models/Post";
 import Http from "../services/Http";
 import { API_METHODS } from "../utils/dec";
 
-const CreatePost = ({ onCreate }) => {
+const CreatePost = ({ blogId, onCreate }) => {
   const [inputValues, setInputValues] = useState({});
 
   const handleChange = (e) => {
@@ -12,7 +12,7 @@ const CreatePost = ({ onCreate }) => {
   };
 
   const handleCreate = () => {
-    const newPost = new Post(inputValues);
+    const newPost = new Post({ ...inputValues, blogId });
     Http.Post(API_METHODS.CREATE_POST, newPost)
       .then((res) => {
         console.log(res);

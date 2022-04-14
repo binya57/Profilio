@@ -1,9 +1,10 @@
-class Post {
+class Comment {
   constructor(params) {
     this.title = params.title;
     this.author = params.author;
     this.body = params.body;
-    this.blogId = params.blogId;
+    this.postId = params.postId;
   }
 }
-export default Post;
+
+export default Comment;

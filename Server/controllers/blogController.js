@@ -13,7 +13,10 @@ const getAllBlogs = async (req, res) => {
 const getBlogById = async (req, res) => {
   const { blogId } = req.params;
   try {
-    const requestedBlog = await Blog.findById(blogId);
+    const requestedBlog = await Blog.findById(blogId).populate({
+      path: "posts",
+      select: "title author body",
+    });
     if (!requestedBlog) return res.status(404).send();
     res.json(requestedBlog);
   } catch (error) {

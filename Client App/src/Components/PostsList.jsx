@@ -4,26 +4,12 @@ import { API_METHODS } from "../utils/dec";
 import CreatePost from "./CreatePost";
 import PostListItem from "./PostListItem";
 
-const PostsList = () => {
-  const [postsList, setPostsList] = useState([]);
-  const getPosts = () => {
-    Http.Get(API_METHODS.ALL_POSTS)
-      .then(setPostsList)
-      .catch((err) => {
-        throw err;
-      });
-  };
-
-  const addToPostList = (newPost) =>
-    setPostsList((posts) => [...posts, newPost]);
-
-  useEffect(getPosts, []);
-
+const PostsList = ({ blogId, posts, addPost }) => {
   return (
     <>
-      <CreatePost onCreate={addToPostList} />
+      <CreatePost blogId={blogId} onCreate={addPost} />
 
-      {postsList.map((post) => (
+      {posts.map((post) => (
         <PostListItem key={post._id} post={post} />
       ))}
     </>

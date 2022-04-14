@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Blog from "./Pages/Blog/Blog";
 import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
+import Post from "./Pages/Post/Post";
 import SignUp from "./Pages/SignUp/SignUp";
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       <Route path="Blogs/:blogId" element={<Blog />} />
       <Route path="Login" element={<Login />} />
       <Route path="SignUp" element={<SignUp />} />
+      <Route path="Posts/:postId" element={<Post />} />
 
       <Route path="*" element={<div>not found</div>} />
     </Routes>

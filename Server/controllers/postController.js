@@ -1,8 +1,8 @@
 const Post = require("../models/Post");
 
-const getAllPosts = async (req, res) => {
+const getBlogPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find({ blogId: req.params.blogId });
     return res.json(posts);
   } catch (error) {
     console.error(error);
@@ -12,7 +12,10 @@ const getAllPosts = async (req, res) => {
 const getPost = async (req, res) => {
   const { postId } = req.params;
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate({
+      path: "comments",
+      select: "postId author title body",
+    });
     if (!post) return res.status(404).send();
     return res.json(post);
   } catch (error) {
@@ -24,12 +27,12 @@ const getPost = async (req, res) => {
 const createPost = async (req, res) => {
   const newPost = new Post(req.body);
   try {
-    const response = await newPost.save(newPost);
+    const response = await newPost.save();
     return res.status(201).send(response);
   } catch (error) {
     console.error(error);
-    return res.status(500).send();
+    return res.status(500).send(error);
   }
 };
 
-module.exports = { getAllPosts, getPost, createPost };
+module.exports = { getBlogPosts, getPost, createPost };

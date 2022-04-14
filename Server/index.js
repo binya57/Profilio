@@ -7,6 +7,7 @@ require("dotenv").config();
 const blogsRoutes = require("./routes/blogsRoutes");
 const userRoutes = require("./routes/userRoutes");
 const postsRoutes = require("./routes/postsRoutes");
+const commentRoutes = require("./routes/CommentsRoutes");
 
 //#region consts:
 const PORT = process.env.PORT || 3001;
@@ -25,6 +26,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 app.use(blogsRoutes);
 app.use(userRoutes);
 app.use(postsRoutes);
+app.use(commentRoutes);
 
 async function main() {
   await mongoose.connect(uri);
