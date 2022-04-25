@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -13,13 +13,25 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Http from "../../services/Http";
 import { API_METHODS } from "../../utils/dec";
+import User from "../../models/User";
 
 const SignUp = () => {
   const [fieldValues, setfieldValues] = useState({});
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setfieldValues((values) => ({ ...values, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    Http.Post(API_METHODS.SIGN_UP, fieldValues).then().catch();
+    const newUser = new User(fieldValues);
+    Http.Post(API_METHODS.SIGN_UP, fieldValues)
+      .then((res) => {
+        navigate("/Login", { replace: true });
+      })
+      .catch((err) => console.log(err, "sign up"));
   };
 
   return (
@@ -44,32 +56,25 @@ const SignUp = () => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="userName"
+            label="User Name"
+            name="userName"
+            autoComplete="userName"
             autoFocus
-            value={fieldValues.email || ""}
-            onChange={(e) =>
-              setfieldValues((values) => ({ ...values, email: e.target.value }))
-            }
+            value={fieldValues.userName || ""}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
+            name="passWord"
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
-            value={fieldValues.password || ""}
-            onChange={(e) =>
-              setfieldValues((values) => ({
-                ...values,
-                password: e.target.value,
-              }))
-            }
+            value={fieldValues.passWord || ""}
+            onChange={handleChange}
           />
           <Button
             type="submit"

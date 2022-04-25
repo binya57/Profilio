@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 //#region routes:
-const blogsRoutes = require("./routes/blogsRoutes");
 const userRoutes = require("./routes/userRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 const postsRoutes = require("./routes/postsRoutes");
 const commentRoutes = require("./routes/CommentsRoutes");
 
@@ -23,8 +23,8 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 */
 
 //# routes
-app.use(blogsRoutes);
 app.use(userRoutes);
+app.use(profileRoutes);
 app.use(postsRoutes);
 app.use(commentRoutes);
 

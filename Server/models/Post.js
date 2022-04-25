@@ -3,9 +3,9 @@ const { Schema, model } = mongoose;
 
 const PostSchema = new Schema(
   {
-    blogId: {
+    profileId: {
       type: Schema.Types.ObjectId,
-      ref: "Blog",
+      ref: "Profile",
       required: true,
     },
     title: String,

@@ -42,5 +42,24 @@ class Http {
       throw error;
     }
   };
+
+  static Put = async (url, data) => {
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    try {
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) throw new Error(response.statusText);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 export default Http;

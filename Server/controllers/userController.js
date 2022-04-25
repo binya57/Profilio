@@ -1,19 +1,17 @@
 //signUp, signIn
 const bcrypt = require("bcrypt");
-
-const users = [];
+const User = require("../models/User");
 
 const signUp = async (req, res) => {
-  const { email, password } = req.body;
-  if (users.find((user) => user.email === email))
-    return res
-      .status(409)
-      .send("You already have an account, sign in to continue");
+  const { userName: _userName, passWord: _passWord } = req.body;
+  const userNameExists = await User.findOne({ userName: _userName });
+  if (userNameExists)
+    return res.status(409).send({ msg: "This User Name Already exists" });
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { email, password: hashedPassword };
-    users.push(newUser);
-    res.status(201).send();
+    const hashedPassword = await bcrypt.hash(_passWord, 10);
+    const newUser = new User({ ...req.body, passWord: hashedPassword });
+    await newUser.save();
+    res.status(201).send({ authorized: true });
   } catch (error) {
     console.error(error);
     res.status(500).send();
@@ -21,14 +19,19 @@ const signUp = async (req, res) => {
 };
 
 const logIn = async (req, res) => {
-  const user = users.find((user) => user.email === req.body.email);
-
-  if (!user) return res.status(403).send("Not Authorized");
-
+  const { userName: _userName, passWord: _passWord } = req.body;
+  console.log(_userName, _passWord);
+  const user = await User.findOne({ userName: _userName });
+  if (!user) return res.status(403).send({ authorized: false });
   try {
-    const match = await bcrypt.compare(req.body.password, user.password);
-    if (match) return res.send(true);
-    else res.status(403).send("Not Authorized");
+    const match = await bcrypt.compare(_passWord, user.passWord);
+    if (match)
+      return res.send({
+        userName: user.userName,
+        _id: user._id,
+        authorized: true,
+      });
+    else res.status(403).send({ authorized: false });
   } catch (error) {
     console.error(error);
     res.status(500).send();

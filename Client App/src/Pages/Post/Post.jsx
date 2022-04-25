@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CreateComment from "../../components/CreateComment";
 import Loader from "../../components/Loader";
 import Http from "../../services/Http";
 import { API_METHODS } from "../../utils/dec";
@@ -24,15 +23,6 @@ const Post = () => {
         <span>{post.title}</span>
         <span>{post.body}</span>
       </div>
-      <CreateComment
-        onCreate={(newComment) =>
-          setPost((_post) => ({
-            ..._post,
-            comments: [..._post.comments, newComment],
-          }))
-        }
-        postId={post._id}
-      />
       <div className="comments-list">
         {post.comments.map((comment) => (
           <div key={comment._id} className="comment-list-item">

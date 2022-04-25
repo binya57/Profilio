@@ -3,7 +3,7 @@ class Post {
     this.title = params.title;
     this.author = params.author;
     this.body = params.body;
-    this.blogId = params.blogId;
+    this.profileId = params.profileId;
   }
 }
 export default Post;

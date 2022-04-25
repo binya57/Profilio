@@ -1,14 +1,5 @@
 const Post = require("../models/Post");
 
-const getBlogPosts = async (req, res) => {
-  try {
-    const posts = await Post.find({ blogId: req.params.blogId });
-    return res.json(posts);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send();
-  }
-};
 const getPost = async (req, res) => {
   const { postId } = req.params;
   try {
@@ -35,4 +26,4 @@ const createPost = async (req, res) => {
   }
 };
 
-module.exports = { getBlogPosts, getPost, createPost };
+module.exports = { getPost, createPost };
