@@ -3,7 +3,9 @@ const Profile = require("../models/Profile");
 const createProfile = async (req, res) => {
   const newProfile = new Profile(req.body);
   try {
-    const response = await newProfile.save();
+    const response = await newProfile.save(({ errors }) =>
+      res.status(400).send(errors)
+    );
     return res.status(201).send(response);
   } catch (error) {
     console.error(error);
