@@ -18,15 +18,14 @@ import UserContext from "../../services/UserContext";
 const Login = () => {
   const [fieldValues, setfieldValues] = useState({});
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { user, logIn } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     Http.Post(API_METHODS.LOG_IN, fieldValues)
       .then((res) => {
         setfieldValues({});
-        setUser(res);
-        navigate("/", { replace: true });
+        logIn(res);
       })
       .catch((err) => console.log(err));
   };
@@ -47,11 +46,11 @@ const Login = () => {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+        <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Log in
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
@@ -71,7 +70,7 @@ const Login = () => {
             required
             fullWidth
             name="passWord"
-            label="passWord"
+            label="Password"
             type="passWord"
             id="passWord"
             autoComplete="current-passWord"
@@ -88,7 +87,7 @@ const Login = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Log In
           </Button>
           <Grid container>
             <Grid item xs>

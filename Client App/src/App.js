@@ -6,7 +6,7 @@ import Post from "./Pages/Post/Post";
 import SignUp from "./Pages/SignUp/SignUp";
 import { UserContextProvider } from "./services/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ProfileEditor from "./Pages/ProfileEditor";
+import ProfileEditor from "./Pages/ProfileEditor/ProfileEditor";
 
 const App = () => {
   return (
@@ -14,8 +14,8 @@ const App = () => {
       <Routes>
         <Route path="Login" element={<Login />} />
         <Route path="SignUp" element={<SignUp />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Home />} />
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route index element={<Home />} />
           <Route path="/MyProfile" element={<ProfileEditor />} />
         </Route>
         <Route path="*" element={<div>not found</div>} />

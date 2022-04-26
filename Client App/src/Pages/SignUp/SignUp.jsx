@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,10 +14,11 @@ import Container from "@mui/material/Container";
 import Http from "../../services/Http";
 import { API_METHODS } from "../../utils/dec";
 import User from "../../models/User";
+import UserContext from "../../services/UserContext";
 
 const SignUp = () => {
   const [fieldValues, setfieldValues] = useState({});
-  const navigate = useNavigate();
+  const { signUp } = useContext(UserContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,11 +28,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newUser = new User(fieldValues);
-    Http.Post(API_METHODS.SIGN_UP, fieldValues)
-      .then((res) => {
-        navigate("/Login", { replace: true });
-      })
-      .catch((err) => console.log(err, "sign up"));
+    signUp(newUser);
   };
 
   return (
@@ -82,7 +79,7 @@ const SignUp = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Sign Up
           </Button>
           <Grid container>
             <Grid item xs></Grid>

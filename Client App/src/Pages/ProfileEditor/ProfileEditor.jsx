@@ -3,24 +3,22 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
-import Http from "../services/Http";
-import UserContext from "../services/UserContext";
-import { API_METHODS } from "../utils/dec";
-import Profile from "../models/Profile";
+import Http from "../../services/Http";
+import UserContext from "../../services/UserContext";
+import { API_METHODS } from "../../utils/dec";
+import Profile from "../../models/Profile";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PostsList from "../../components/PostsList";
 
 const ProfileEditor = () => {
-  const { user } = useContext(UserContext);
-  const [profile, setProfile] = useState({
-    userId: user._id,
-    userName: user.userName,
-  });
-
-  const isNew = !profile._id;
+  const { user, setUser } = useContext(UserContext);
+  const [profile, setProfile] = useState({});
+  const [isNew, setIsNew] = useState(!user.userProfileId);
 
   useEffect(() => {
-    Http.Get(`${API_METHODS.USER_PROFILE}/${user._id}`)
+    if (isNew) return;
+    Http.Get(`${API_METHODS.PROFILES}/${user.userProfileId}`)
       .then(setProfile)
       .catch((err) => {
         console.log(err);
@@ -32,12 +30,20 @@ const ProfileEditor = () => {
     setProfile((values) => ({ ...values, [name]: value }));
   };
 
-  const handleCreateProfile = (e) => {
+  const handleProfileSave = (e) => {
     e.preventDefault();
-    const _profile = new Profile(profile);
+    const _profile = new Profile({
+      ...profile,
+      userId: user.id,
+      userName: user.userName,
+    });
     if (isNew) {
       Http.Post(API_METHODS.PROFILES, _profile)
-        .then(setProfile)
+        .then((res) => {
+          setProfile(res);
+          setUser((user) => ({ ...user, userProfileId: res.id }));
+          setIsNew(false);
+        })
         .catch((err) => console.error(err));
     } else {
       Http.Put(`${API_METHODS.PROFILES}/${profile._id}`, _profile).catch(
@@ -47,23 +53,30 @@ const ProfileEditor = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Link to="/">
-        <ArrowBackIcon />
-      </Link>
+    <Box width="100%" height="100%">
       <Box
         sx={{
-          marginTop: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          padding: "5%",
+          maxWidth: "50%",
         }}
       >
-        <Avatar src="#" alt={user.userName} sx={{ mb: 2 }} />
+        <Box alignSelf="flex-start">
+          <Link to="/">
+            <ArrowBackIcon fontSize="large" />
+          </Link>
+        </Box>
+        <Avatar src="" alt={user.userName} sx={{ mb: 2 }} />
         <Typography component="h1" variant="h5">
           {user.userName}'s Profile
         </Typography>
-        <Box component="form" onSubmit={handleCreateProfile} sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleProfileSave}
+          sx={{ mt: 1, width: "xs" }}
+        >
           <TextField
             label="Profile Title"
             name="title"
@@ -73,6 +86,7 @@ const ProfileEditor = () => {
             required
             fullWidth
             autoFocus
+            size="small"
           />
           <TextField
             label="Profile Description"
@@ -83,18 +97,21 @@ const ProfileEditor = () => {
             multiline
             required
             fullWidth
+            size="small"
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            size="small"
           >
             {isNew ? "Create Profile" : "Update Profile"}
           </Button>
         </Box>
       </Box>
-    </Container>
+      <PostsList posts={profile.posts || []} />
+    </Box>
   );
 };
 

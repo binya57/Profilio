@@ -6,7 +6,9 @@ const signUp = async (req, res) => {
   const { userName: _userName, passWord: _passWord } = req.body;
   const userNameExists = await User.findOne({ userName: _userName });
   if (userNameExists)
-    return res.status(409).send({ msg: "This User Name Already exists" });
+    return res
+      .status(409)
+      .send({ status: "Failed", msg: "This User Name Already exists" });
   try {
     const hashedPassword = await bcrypt.hash(_passWord, 10);
     const newUser = new User({ ...req.body, passWord: hashedPassword });
@@ -28,7 +30,8 @@ const logIn = async (req, res) => {
     if (match)
       return res.send({
         userName: user.userName,
-        _id: user._id,
+        id: user.id,
+        userProfileId: user.userProfileId,
         authorized: true,
       });
     else res.status(403).send({ authorized: false });

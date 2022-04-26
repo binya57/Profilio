@@ -1,12 +1,23 @@
 const Profile = require("../models/Profile");
+const User = require("../models/User");
 
 const createProfile = async (req, res) => {
+  const { userId } = req.body;
+
   const newProfile = new Profile(req.body);
   try {
-    const response = await newProfile.save(({ errors }) =>
-      res.status(400).send(errors)
+    const hasProfile = await Profile.findOne({ userId });
+    if (hasProfile)
+      return res
+        .status(400)
+        .send({ status: "Failed", msg: "This User Alreadey Has A Profile" });
+    const profileResponse = await newProfile.save();
+    //! this does not updates for some reason!!!
+    const userResponse = await User.updateOne(
+      { userId },
+      { userProfileId: profileResponse.id }
     );
-    return res.status(201).send(response);
+    return res.status(201).send(profileResponse);
   } catch (error) {
     console.error(error);
     return res.status(500).send();

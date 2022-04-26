@@ -1,7 +1,7 @@
 class User {
   constructor(props) {
     this.userName = props.userName;
-    this.passWord = props.password;
+    this.passWord = props.passWord;
     this.userProfileId = props.userProfileId;
   }
 }
