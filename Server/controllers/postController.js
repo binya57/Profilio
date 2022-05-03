@@ -26,4 +26,17 @@ const createPost = async (req, res) => {
   }
 };
 
-module.exports = { getPost, createPost };
+const updatePost = async (req, res) => {
+  const { postId } = req.params;
+  try {
+    await Post.updateOne({ id: postId }, req.body);
+    return res
+      .status(200)
+      .send({ status: "Sucsess", message: "Post Updated Sucsessfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send();
+  }
+};
+
+module.exports = { getPost, createPost, updatePost };

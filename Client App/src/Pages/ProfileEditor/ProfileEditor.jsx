@@ -1,4 +1,11 @@
-import { Avatar, Button, Typography } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Fab,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
@@ -10,20 +17,46 @@ import Profile from "../../models/Profile";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PostsList from "../../components/PostsList";
+import Loader from "../../components/Loader";
+import PostEditor from "../../components/PostEditor";
+import AddIcon from "@mui/icons-material/Add";
+import BackButton from "../../components/BackButton";
 
 const ProfileEditor = () => {
   const { user, setUser } = useContext(UserContext);
   const [profile, setProfile] = useState({});
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isNew, setIsNew] = useState(!user.userProfileId);
+  const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
+  const [selectedForEditPost, setSelectedForEditPost] = useState(null);
 
   useEffect(() => {
     if (isNew) return;
     Http.Get(`${API_METHODS.PROFILES}/${user.userProfileId}`)
-      .then(setProfile)
+      .then((res) => {
+        setProfile(res);
+        setIsDataLoaded(true);
+      })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  const refreshPost = ({ id }) => {
+    Http.Get(`${API_METHODS.POSTS}/${id}`).then((res) => {
+      setProfile((profile) => {
+        const postExists = profile.posts?.find((post) => post.id === res.id);
+        if (postExists)
+          return {
+            ...profile,
+            posts: profile.posts.map((post) =>
+              post.id === res.id ? res : post
+            ),
+          };
+        else return { ...profile, posts: [...(profile.posts || []), res] };
+      });
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,6 +76,7 @@ const ProfileEditor = () => {
           setProfile(res);
           setUser((user) => ({ ...user, userProfileId: res.id }));
           setIsNew(false);
+          setIsDataLoaded(true);
         })
         .catch((err) => console.error(err));
     } else {
@@ -52,22 +86,25 @@ const ProfileEditor = () => {
     }
   };
 
+  if (!isNew && !isDataLoaded) return <Loader />;
+
   return (
-    <Box width="100%" height="100%">
+    <Grid
+      maxWidth="100%"
+      maxHeight="100%"
+      container
+      flexDirection="row"
+      flexWrap="nowrap"
+      padding={5}
+      gap={10}
+    >
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "5%",
-          maxWidth: "50%",
         }}
       >
-        <Box alignSelf="flex-start">
-          <Link to="/">
-            <ArrowBackIcon fontSize="large" />
-          </Link>
-        </Box>
         <Avatar src="" alt={user.userName} sx={{ mb: 2 }} />
         <Typography component="h1" variant="h5">
           {user.userName}'s Profile
@@ -110,8 +147,40 @@ const ProfileEditor = () => {
           </Button>
         </Box>
       </Box>
-      <PostsList posts={profile.posts || []} />
-    </Box>
+      <Box flexGrow={2}>
+        {!isNew && (
+          <Container sx={{ width: "fit-content", mb: 2 }}>
+            <Fab
+              color="primary"
+              size="medium"
+              onClick={() => setIsPostEditorOpen(true)}
+              variant="extended"
+            >
+              <AddIcon fontSize="medium" sx={{ mb: 0.3, mr: 1 }} />
+              Create New Post
+            </Fab>
+          </Container>
+        )}
+        <PostsList
+          posts={profile.posts || []}
+          editable
+          handleEditClick={(post) => {
+            setSelectedForEditPost(post);
+            setIsPostEditorOpen(true);
+          }}
+        />
+      </Box>
+      <PostEditor
+        isOpen={isPostEditorOpen}
+        onClose={() => {
+          setIsPostEditorOpen(false);
+          setSelectedForEditPost(null);
+        }}
+        profileId={profile.id}
+        onSave={refreshPost}
+        existingPost={selectedForEditPost}
+      />
+    </Grid>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import Http from "../../services/Http";
 import { API_METHODS } from "../../utils/dec";
 import UserContext from "../../services/UserContext";
@@ -13,13 +14,19 @@ import {
   Backdrop,
   CircularProgress,
   Container,
+  IconButton,
   Typography,
 } from "@mui/material";
 import "./Home.css";
+import PostsList from "../../components/PostsList";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import PostEditor from "../../components/PostEditor";
 
 const Home = () => {
   const [selectedProfile, setSelectedProfile] = useState();
-  const { logOut } = useContext(UserContext);
+  const [selectedForEditPost, setSelectedForEditPost] = useState(null);
+  const { user, logOut } = useContext(UserContext);
 
   const handleProfileItemSelect = (id) => {
     id !== selectedProfile?.id &&
@@ -28,16 +35,6 @@ const Home = () => {
 
   return (
     <div className="home">
-      <Box className="header">
-        <Link to="/MyProfile">
-          <AccountCircleIcon fontSize="large" color="primary" />
-        </Link>
-        <LogoutIcon
-          sx={{ cursor: "pointer" }}
-          fontSize="large"
-          onClick={logOut}
-        />
-      </Box>
       <Box className="home-content">
         <Box className="profile-list-side">
           <ProfileList
@@ -55,6 +52,19 @@ const Home = () => {
               <Typography component="p">
                 {selectedProfile.description}
               </Typography>
+              <Box maxHeight="73%" overflow="auto" width="80%">
+                <PostsList
+                  posts={selectedProfile?.posts}
+                  editable={selectedProfile.userId === user.id}
+                  handleEditClick={setSelectedForEditPost}
+                />
+                {selectedForEditPost && (
+                  <PostEditor
+                    existingPost={selectedForEditPost}
+                    onSave={() => setSelectedForEditPost(null)}
+                  />
+                )}
+              </Box>
             </>
           )}
         </Box>

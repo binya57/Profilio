@@ -36,8 +36,8 @@ class Http {
     try {
       const response = await fetch(url, requestOptions);
       if (!response.ok) throw new Error(response.statusText);
-      const data = await response.json();
-      return data;
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       throw error;
     }
@@ -55,8 +55,8 @@ class Http {
     try {
       const response = await fetch(url, requestOptions);
       if (!response.ok) throw new Error(response.statusText);
-      const data = await response.json();
-      return data;
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       throw error;
     }

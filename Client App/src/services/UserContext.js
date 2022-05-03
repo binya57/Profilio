@@ -20,9 +20,13 @@ export const UserContextProvider = ({ children }) => {
       .catch((err) => console.log(err, "sign up"));
   };
 
-  const logIn = (user) => {
-    setUser(user);
-    navigate("/", { replace: true });
+  const logIn = (userDetails) => {
+    Http.Post(API_METHODS.LOG_IN, userDetails)
+      .then((res) => {
+        setUser(res);
+        navigate("/", { replace: true });
+      })
+      .catch((err) => console.log(err));
   };
 
   const logOut = () => {

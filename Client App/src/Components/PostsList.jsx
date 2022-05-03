@@ -1,12 +1,28 @@
+import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
-import React from "react";
+import React, { useState } from "react";
 import PostCard from "./PostCard";
+import PostEditor from "./PostEditor";
 
-const PostsList = ({ posts, editable }) => {
+const PostsList = ({ posts, editable, handleEditClick, ...props }) => {
   return (
-    <Box className="posts-list">
+    <Box
+      className="posts-list"
+      display="flex"
+      flexDirection="column"
+      flexWrap="nowrap"
+      alignItems="center"
+      justifyContent="space-around"
+      {...props}
+    >
       {posts.map((post) => (
-        <PostCard post={post} editable={false} />
+        <Box mb="1rem" width="100%" key={post.id}>
+          <PostCard
+            post={post}
+            editable={editable}
+            onEditClick={() => handleEditClick(post)}
+          />
+        </Box>
       ))}
     </Box>
   );

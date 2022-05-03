@@ -6,6 +6,11 @@ export const API_METHODS = {
   PROFILES: `${API}/profiles`,
   USER_PROFILE: `${API}/profiles/MyProfile`,
   POST_BY_ID: `${API}/posts`,
-  CREATE_POST: `${API}/posts`,
+  POSTS: `${API}/posts`,
   CREATE_COMMENT: `${API}/comments`,
+};
+
+export const PATHS = {
+  HOME: "/",
+  MY_PROFILE: "/MyProfile",
 };

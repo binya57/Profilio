@@ -20,14 +20,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { user, logIn } = useContext(UserContext);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    Http.Post(API_METHODS.LOG_IN, fieldValues)
-      .then((res) => {
-        setfieldValues({});
-        logIn(res);
-      })
-      .catch((err) => console.log(err));
+    logIn(fieldValues);
   };
 
   const handleChange = (e) => {

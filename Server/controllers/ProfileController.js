@@ -10,11 +10,10 @@ const createProfile = async (req, res) => {
     if (hasProfile)
       return res
         .status(400)
-        .send({ status: "Failed", msg: "This User Alreadey Has A Profile" });
+        .send({ status: "Failed", message: "This User Already Has A Profile" });
     const profileResponse = await newProfile.save();
-    //! this does not updates for some reason!!!
     const userResponse = await User.updateOne(
-      { userId },
+      { _id: userId },
       { userProfileId: profileResponse.id }
     );
     return res.status(201).send(profileResponse);
@@ -39,9 +38,12 @@ const getProfileById = async (req, res) => {
   try {
     const requestedProfile = await Profile.findById(profileId).populate({
       path: "posts",
-      select: "title author body",
+      select: "title author body updatedAt",
     });
-    if (!requestedProfile) return res.status(404).send();
+    if (!requestedProfile)
+      return res
+        .status(404)
+        .send({ status: "Failed", message: "No Matching Profile Found" });
     return res.json(requestedProfile);
   } catch (error) {
     console.error(error);
@@ -61,10 +63,12 @@ const getUserProfile = async (req, res) => {
 };
 
 const editProfile = async (req, res) => {
-  const { profileId } = req.body;
+  const { profileId } = req.params;
   try {
     await Profile.updateOne({ profileId }, req.body);
-    return res.status(204).json();
+    return res
+      .status(200)
+      .json({ status: "Sucsess", message: "Profile Updated Sucsessfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).send();
