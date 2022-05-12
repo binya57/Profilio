@@ -1,34 +1,19 @@
-import {
-  Avatar,
-  Button,
-  Fab,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Avatar, Button, Grid, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Http from "../../services/Http";
 import UserContext from "../../services/UserContext";
 import { API_METHODS } from "../../utils/dec";
 import Profile from "../../models/Profile";
-import { Link } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PostsList from "../../components/PostsList";
 import Loader from "../../components/Loader";
-import PostEditor from "../../components/PostEditor";
-import AddIcon from "@mui/icons-material/Add";
-import BackButton from "../../components/BackButton";
 
 const ProfileEditor = () => {
   const { user, setUser } = useContext(UserContext);
   const [profile, setProfile] = useState({});
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isNew, setIsNew] = useState(!user.userProfileId);
-  const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
-  const [selectedForEditPost, setSelectedForEditPost] = useState(null);
 
   useEffect(() => {
     if (isNew) return;
@@ -41,22 +26,6 @@ const ProfileEditor = () => {
         console.log(err);
       });
   }, []);
-
-  const refreshPost = ({ id }) => {
-    Http.Get(`${API_METHODS.POSTS}/${id}`).then((res) => {
-      setProfile((profile) => {
-        const postExists = profile.posts?.find((post) => post.id === res.id);
-        if (postExists)
-          return {
-            ...profile,
-            posts: profile.posts.map((post) =>
-              post.id === res.id ? res : post
-            ),
-          };
-        else return { ...profile, posts: [...(profile.posts || []), res] };
-      });
-    });
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,7 +60,7 @@ const ProfileEditor = () => {
   return (
     <Grid
       maxWidth="100%"
-      maxHeight="100%"
+      maxHeight="93%"
       container
       flexDirection="row"
       flexWrap="nowrap"
@@ -103,17 +72,14 @@ const ProfileEditor = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          maxWidth: 1 / 2,
         }}
       >
         <Avatar src="" alt={user.userName} sx={{ mb: 2 }} />
         <Typography component="h1" variant="h5">
           {user.userName}'s Profile
         </Typography>
-        <Box
-          component="form"
-          onSubmit={handleProfileSave}
-          sx={{ mt: 1, width: "xs" }}
-        >
+        <Box component="form" onSubmit={handleProfileSave} sx={{ mt: 1 }}>
           <TextField
             label="Profile Title"
             name="title"
@@ -135,6 +101,7 @@ const ProfileEditor = () => {
             required
             fullWidth
             size="small"
+            minRows={4}
           />
           <Button
             type="submit"
@@ -147,39 +114,9 @@ const ProfileEditor = () => {
           </Button>
         </Box>
       </Box>
-      <Box flexGrow={2}>
-        {!isNew && (
-          <Container sx={{ width: "fit-content", mb: 2 }}>
-            <Fab
-              color="primary"
-              size="medium"
-              onClick={() => setIsPostEditorOpen(true)}
-              variant="extended"
-            >
-              <AddIcon fontSize="medium" sx={{ mb: 0.3, mr: 1 }} />
-              Create New Post
-            </Fab>
-          </Container>
-        )}
-        <PostsList
-          posts={profile.posts || []}
-          editable
-          handleEditClick={(post) => {
-            setSelectedForEditPost(post);
-            setIsPostEditorOpen(true);
-          }}
-        />
+      <Box width={1 / 2}>
+        <PostsList posts={profile.posts || []} editable />
       </Box>
-      <PostEditor
-        isOpen={isPostEditorOpen}
-        onClose={() => {
-          setIsPostEditorOpen(false);
-          setSelectedForEditPost(null);
-        }}
-        profileId={profile.id}
-        onSave={refreshPost}
-        existingPost={selectedForEditPost}
-      />
     </Grid>
   );
 };

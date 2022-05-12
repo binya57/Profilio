@@ -4,7 +4,9 @@ const User = require("../models/User");
 
 const signUp = async (req, res) => {
   const { userName: _userName, passWord: _passWord } = req.body;
-  const userNameExists = await User.findOne({ userName: _userName });
+  const userNameExists = await User.findOne({
+    userName: new RegExp(`^${_userName}$`, "i"),
+  });
   if (userNameExists)
     return res
       .status(409)
@@ -13,13 +15,11 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(_passWord, 10);
     const newUser = new User({ ...req.body, passWord: hashedPassword });
     await newUser.save();
-    res
-      .status(201)
-      .send({
-        status: "Sucsess",
-        message: "User Created Sucsessfuly",
-        authorized: true,
-      });
+    res.status(201).send({
+      status: "Sucsess",
+      message: "User Created Sucsessfuly",
+      authorized: true,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send();
@@ -28,15 +28,15 @@ const signUp = async (req, res) => {
 
 const logIn = async (req, res) => {
   const { userName: _userName, passWord: _passWord } = req.body;
-  const user = await User.findOne({ userName: _userName });
+  const user = await User.findOne({
+    userName: new RegExp(`^${_userName}$`, "i"),
+  });
   if (!user)
-    return res
-      .status(403)
-      .send({
-        status: "Failed",
-        message: "This User Does Not Exist",
-        authorized: false,
-      });
+    return res.status(403).send({
+      status: "Failed",
+      message: "This User Does Not Exist",
+      authorized: false,
+    });
   try {
     const match = await bcrypt.compare(_passWord, user.passWord);
     if (match)
@@ -47,13 +47,11 @@ const logIn = async (req, res) => {
         authorized: true,
       });
     else
-      res
-        .status(403)
-        .send({
-          status: "Failed",
-          message: "The Password Is Incorrect",
-          authorized: false,
-        });
+      res.status(403).send({
+        status: "Failed",
+        message: "The Password Is Incorrect",
+        authorized: false,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).send();

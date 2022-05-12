@@ -1,59 +1,55 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormLabel,
-  IconButton,
-  TextField,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import React, { useContext, useEffect, useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Post from "../models/Post";
 import UserContext from "../services/UserContext";
 import Http from "../services/Http";
 import { API_METHODS } from "../utils/dec";
 
-const PostEditor = ({ isOpen, onClose, profileId, existingPost, onSave }) => {
+const PostEditor = ({ isOpen, onClose, existingPost, onSave }) => {
   const initialPostValues = {
     title: "",
     body: "",
   };
-  const [post, setPost] = useState(existingPost || initialPostValues);
-  const [isNew, setIsNew] = useState(!existingPost);
-
+  const [post, setPost] = useState(initialPostValues);
   const { user } = useContext(UserContext);
+  const isNew = !post.id;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPost((values) => ({ ...values, [name]: value }));
   };
 
-  const savePost = () => {
-    const newPost = new Post({
+  const handleCreate = (post) => {
+    return Http.Post(API_METHODS.POSTS, post);
+  };
+
+  const handleEdit = (post) => {
+    return Http.Put(`${API_METHODS.POSTS}/${post.id}`, post);
+  };
+
+  const handleSave = async () => {
+    const _post = new Post({
       ...post,
       author: user.userName,
-      profileId: profileId || existingPost.profileId,
+      profileId: user.userProfileId,
     });
-    isNew
-      ? Http.Post(API_METHODS.POSTS, newPost)
-          .then((res) => {
+
+    try {
+      isNew
+        ? await handleCreate(_post).then((res) => {
             setPost(res);
-            setIsNew(false);
-            onSave?.(res);
+            onSave(res.id);
           })
-          .catch((err) => console.error(err))
-      : Http.Put(`${API_METHODS.POSTS}/${post.id}`, newPost)
-          .then((res) => {
-            onSave?.(post);
-          })
-          .catch((err) => console.error(err));
+        : await handleEdit(_post).then(() => onSave(post.id));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    setPost(existingPost || initialPostValues);
-    setIsNew(!existingPost);
+    existingPost ? setPost(existingPost) : setPost(initialPostValues);
   }, [existingPost]);
 
   return (
@@ -62,7 +58,6 @@ const PostEditor = ({ isOpen, onClose, profileId, existingPost, onSave }) => {
       open={isOpen}
       onClose={() => {
         setPost(initialPostValues);
-        setIsNew(!existingPost);
         onClose();
       }}
       PaperProps={{ sx: { height: "100vh" } }}
@@ -76,12 +71,16 @@ const PostEditor = ({ isOpen, onClose, profileId, existingPost, onSave }) => {
         height="100%"
         width="30%"
         margin="auto"
+        mt={6}
       >
+        <Typography variant="h4" align="center">
+          {isNew ? "Create New Post" : "Update Post"}
+        </Typography>
         <TextField
           name="title"
           value={post.title}
           onChange={handleChange}
-          label="post title"
+          label="Post Title"
           autoFocus
           sx={{
             mt: "5%",
@@ -90,13 +89,14 @@ const PostEditor = ({ isOpen, onClose, profileId, existingPost, onSave }) => {
         />
         <TextField
           multiline
+          minRows={4}
           name="body"
           value={post.body}
           onChange={handleChange}
-          label="post body"
+          label="Post Body"
           sx={{ mb: "5%" }}
         />
-        <Button variant="contained" onClick={savePost}>
+        <Button variant="contained" onClick={handleSave}>
           Save
         </Button>
       </Box>

@@ -85,9 +85,9 @@ const Login = () => {
             Log In
           </Button>
           <Grid container>
-            <Grid item xs>
+            {/* <Grid item xs>
               <Link to="#">Forgot password?</Link>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <Link to="/SignUp">Don't have an account? Sign Up</Link>
             </Grid>

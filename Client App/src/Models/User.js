@@ -1,8 +1,9 @@
 class User {
-  constructor(props) {
-    this.userName = props.userName;
-    this.passWord = props.passWord;
-    this.userProfileId = props.userProfileId;
+  constructor(params) {
+    this.id = params.id;
+    this.userName = params.userName;
+    this.passWord = params.passWord;
+    this.userProfileId = params.userProfileId;
   }
 }
 

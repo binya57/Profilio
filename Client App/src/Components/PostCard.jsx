@@ -34,7 +34,7 @@ const PostCard = ({ post, onEditClick = () => {}, editable }) => {
   };
 
   return (
-    <Card sx={{ width: "100%" }} variant="outlined">
+    <Card sx={{ width: "inherit" }} variant="outlined">
       <CardHeader
         avatar={<Avatar src="" alt={post.userName} />}
         action={

@@ -1,26 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
 
 import Http from "../../services/Http";
 import { API_METHODS } from "../../utils/dec";
 import UserContext from "../../services/UserContext";
-import Button from "@mui/material/Button";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LogoutIcon from "@mui/icons-material/Logout";
 import ProfileList from "./ProfileList";
 import { Box } from "@mui/system";
-import {
-  Avatar,
-  Backdrop,
-  CircularProgress,
-  Container,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import "./Home.css";
 import PostsList from "../../components/PostsList";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import PostEditor from "../../components/PostEditor";
 
 const Home = () => {
@@ -52,10 +39,11 @@ const Home = () => {
               <Typography component="p">
                 {selectedProfile.description}
               </Typography>
-              <Box maxHeight="73%" overflow="auto" width="80%">
+              <Box maxHeight="73%" overflow="auto" width="80%" padding={2}>
                 <PostsList
                   posts={selectedProfile?.posts}
                   editable={selectedProfile.userId === user.id}
+                  profileUserId={selectedProfile.userId}
                   handleEditClick={setSelectedForEditPost}
                 />
                 {selectedForEditPost && (
